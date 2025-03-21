@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4a0632036e62e164d9c6b1a409bf1646
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 213197
+  packageName: Unity Terrain - URP Demo Scene
+  packageVersion: 1.0.3
+  assetPath: Assets/TerrainSampleAssets/Prefabs/Details/Materials/Bush_Dry.asset
+  uploadId: 727820
