@@ -1,31 +1,41 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
+    public bool isActiveWeapon;
+    
+    [Header("Bullet Properties")]
     //Bullet Properties
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
     public float bulletVelocity = 30f;
     public float bulletPrefabLifeTime = 3f;
     
+    [Header("Shooting")]
     //Shooting
     public bool isShooting, readyToShoot;
     bool allowReset = true;
     public float shootingDelay = 2f;
     
+    [Header("Burst")]
     //Burst
     public int bulletsPerBurst = 3;
     [FormerlySerializedAs("currentBurst")] public int burstBulletsLeft;
     
+    [Header("Spread")]
     //Spread
     public float spreadIntensity;
+    public float hipSpreadIntensity;
+    public float adsSpreadIntensity;
     
     public GameObject muzzleFlashPrefab;
-    private Animator animator;
+    internal Animator animator;
     
+    [Header("Reloading")]
     //Reloading
     public float reloadTime;
     public int magazineSize, bulletsLeft;
@@ -33,6 +43,19 @@ public class NewMonoBehaviourScript : MonoBehaviour
     
     //UI
     public TextMeshProUGUI ammoDisplay;
+    
+    public Vector3 spawnPosition;
+    public Vector3 spawnRotation;
+
+    private bool isADS;
+
+    public enum WeaponModel
+    {
+        M1911,
+        M4
+    }
+
+    public WeaponModel thisWeaponModel;
 
     public enum ShootingMode
     {
@@ -50,49 +73,78 @@ public class NewMonoBehaviourScript : MonoBehaviour
         animator = GetComponent<Animator>();
         
         bulletsLeft = magazineSize;
+        
+        spreadIntensity = hipSpreadIntensity;
     }
  
     
     void Update()
     {
-        if (bulletsLeft == 0 && isShooting)
+        if (isActiveWeapon)
         {
-            SoundManager.Instance.emptyMagazineSoundM1911.Play();
-        }
+            if (Input.GetMouseButtonDown(1))
+            {
+                EnterADS();
+            }
+            
+            if (Input.GetMouseButtonUp(1))
+            {
+                ExitADS();
+            }
+            
+            GetComponent<Outline>().enabled = false;
+            
+            if (bulletsLeft == 0 && isShooting)
+            {
+                SoundManager.Instance.emptyMagazineSoundM1911.Play();
+            }
         
         
-        if (CurrentShootingMode == ShootingMode.Auto)
-        {
-            //Holding down left mouse button
-            isShooting = Input.GetKey(KeyCode.Mouse0);
-        }
-        else if (CurrentShootingMode == ShootingMode.Single || CurrentShootingMode == ShootingMode.Burst)
-        {
-            //Clicking left mouse button
-            isShooting = Input.GetKeyDown(KeyCode.Mouse0);
-        }
+            if (CurrentShootingMode == ShootingMode.Auto)
+            {
+                //Holding down left mouse button
+                isShooting = Input.GetKey(KeyCode.Mouse0);
+            }
+            else if (CurrentShootingMode == ShootingMode.Single || CurrentShootingMode == ShootingMode.Burst)
+            {
+                //Clicking left mouse button
+                isShooting = Input.GetKeyDown(KeyCode.Mouse0);
+            }
 
-        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !isReloading)
-        {
-            Reload();
-        }
+            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !isReloading && WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > 0)
+            {
+                Reload();
+            }
         
-        //auto reload when mag is empty
-        //if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
-        //{
-        //    Reload();
-        //}
+            //auto reload when mag is empty
+            //if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
+            //{
+            //    Reload();
+            //}
 
-        if (readyToShoot && isShooting && bulletsLeft > 0)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
+            if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
+            {
+                burstBulletsLeft = bulletsPerBurst;
+                FireWeapon();
+            }
+            
         }
+    }
 
-        if (AmmoManager.Instance.ammoDisplay != null)
-        {
-            AmmoManager.Instance.ammoDisplay.text = $"{bulletsLeft / bulletsPerBurst}/{magazineSize / bulletsPerBurst}";
-        }
+    private void EnterADS()
+    {
+        animator.SetTrigger("enterADS");
+        isADS = true;
+        HUDManager.Instance.crosshair.SetActive(false);
+        spreadIntensity = adsSpreadIntensity;
+    }
+
+    private void ExitADS()
+    {
+        animator.SetTrigger("exitADS");
+        isADS = false;
+        HUDManager.Instance.crosshair.SetActive(true);
+        spreadIntensity = hipSpreadIntensity;
     }
 
     private void FireWeapon()
@@ -100,9 +152,17 @@ public class NewMonoBehaviourScript : MonoBehaviour
         bulletsLeft--;
         
         muzzleFlashPrefab.GetComponent<ParticleSystem>().Play();
-        animator.SetTrigger("Recoil");
+
+        if (isADS)
+        {
+            animator.SetTrigger("Recoil_ADS");
+        }
+        else
+        {
+            animator.SetTrigger("Recoil");
+        }
         
-        SoundManager.Instance.shootingSoundM1911.Play();
+        SoundManager.Instance.PlayShootingSound(thisWeaponModel);
         
         readyToShoot = false;
 
@@ -137,7 +197,9 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void Reload()
     {
-        SoundManager.Instance.reloadingSoundM1911.Play();
+        SoundManager.Instance.PlayReloadingSound(thisWeaponModel);
+        
+        animator.SetTrigger("Reload");
         
         isReloading = true;
         Invoke("ReloadCompleted", reloadTime);
@@ -145,7 +207,14 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void ReloadCompleted()
     {
-        bulletsLeft = magazineSize;
+        int bulletsNeeded = magazineSize - bulletsLeft;
+        int availableAmmo = WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel);
+        int bulletsToReload = Math.Min(bulletsNeeded, availableAmmo);
+
+        bulletsLeft += bulletsToReload;
+
+        WeaponManager.Instance.DecreaseTotalAmmo(bulletsToReload, thisWeaponModel);
+
         isReloading = false;
     }
     
@@ -186,5 +255,22 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         Destroy(bullet);
+    }
+
+    public void SwitchActiveSlot(int slotNumber)
+    {
+        if (WeaponManager.Instance.activeWeaponSlot.transform.childCount > 0)
+        {
+            Weapon currentWeapon = WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
+            currentWeapon.isActiveWeapon = false;
+        }
+        
+        WeaponManager.Instance.activeWeaponSlot = WeaponManager.Instance.weaponSlots[slotNumber];
+
+        if (WeaponManager.Instance.activeWeaponSlot.transform.childCount > 0)
+        {
+            Weapon newWeapon = WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
+            newWeapon.isActiveWeapon = true;
+        }
     }
 }
