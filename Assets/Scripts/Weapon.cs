@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 public class Weapon : MonoBehaviour
 {
     public bool isActiveWeapon;
+    public int weaponDamage;
     
     [Header("Bullet Properties")]
     //Bullet Properties
@@ -82,6 +83,12 @@ public class Weapon : MonoBehaviour
     {
         if (isActiveWeapon)
         {
+            foreach (Transform child in transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("WeaponRender");
+                gameObject.layer = LayerMask.NameToLayer("WeaponRender");
+            }
+            
             if (Input.GetMouseButtonDown(1))
             {
                 EnterADS();
@@ -129,6 +136,14 @@ public class Weapon : MonoBehaviour
             }
             
         }
+        else
+        {
+            foreach (Transform child in transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("Default");
+                gameObject.layer = LayerMask.NameToLayer("Default");
+            }
+        }
     }
 
     private void EnterADS()
@@ -170,6 +185,9 @@ public class Weapon : MonoBehaviour
         
         //Instantiate the bullet
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+        
+        Bullet bul = bullet.GetComponent<Bullet>();
+        bul.bulletDamage = weaponDamage;
 
         //Pointing the bullet to face the shooting direction
         bullet.transform.forward = shootingDirection;

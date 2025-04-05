@@ -1,3 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 *.git filter=lfs diff=lfs merge=lfs -text
+Ch10_nonPBR.fbx filter=lfs diff=lfs merge=lfs -text
+Assets/Zombie filter=lfs diff=lfs merge=lfs -text

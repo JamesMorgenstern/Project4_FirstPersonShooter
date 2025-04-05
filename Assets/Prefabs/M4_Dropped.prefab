@@ -5263,7 +5263,7 @@ GameObject:
   - component: {fileID: 6380604534710857908}
   - component: {fileID: 6658533244995396031}
   - component: {fileID: 2029244847296171975}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: M4_Dropped
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5357,6 +5357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActiveWeapon: 0
+  weaponDamage: 25
   bulletPrefab: {fileID: 8188706457575308387, guid: 92f56b0d38eb91745ac95a9ffeb03303, type: 3}
   bulletSpawn: {fileID: 5915927561734626564}
   bulletVelocity: 700

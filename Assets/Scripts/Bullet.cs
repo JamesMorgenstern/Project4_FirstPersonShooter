@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public int bulletDamage;
+    
     private void OnCollisionEnter(Collision objectWeHit)
     {
         if (objectWeHit.gameObject.CompareTag("Target"))
@@ -29,6 +31,18 @@ public class Bullet : MonoBehaviour
             
             //We will not destroy the bullet on impact, for penetration past the bottle
         }
+        
+        if (objectWeHit.gameObject.CompareTag("Enemy"))
+        {
+            if (objectWeHit.gameObject.GetComponent<Enemy>().isDead == false)
+            {
+                objectWeHit.gameObject.gameObject.GetComponent<Enemy>().TakeDamage(bulletDamage);
+            }
+
+            CreateBloodSprayEffect(objectWeHit);
+            
+            Destroy(gameObject);
+        }
     }
 
     void CreateBulletImpactEffect(Collision objectWeHit)
@@ -42,5 +56,18 @@ public class Bullet : MonoBehaviour
             );
         
         hole.transform.SetParent(objectWeHit.gameObject.transform);
+    }
+
+    void CreateBloodSprayEffect(Collision objectWeHit)
+    {
+        ContactPoint contact = objectWeHit.contacts[0];
+
+        GameObject bloodSprayPrefab = Instantiate(
+            GlobalReferences.Instance.bloodSprayEffect,
+            contact.point,
+            Quaternion.LookRotation(contact.normal)
+        );
+        
+        bloodSprayPrefab.transform.SetParent(objectWeHit.gameObject.transform);
     }
 }

@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 6209928748100718657}
   - component: {fileID: 3319900409494374553}
   - component: {fileID: 6669805418886735224}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: M1911_Dropped
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -398,6 +398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActiveWeapon: 0
+  weaponDamage: 20
   bulletPrefab: {fileID: 8188706457575308387, guid: 92f56b0d38eb91745ac95a9ffeb03303, type: 3}
   bulletSpawn: {fileID: 7478650162675264064}
   bulletVelocity: 500
