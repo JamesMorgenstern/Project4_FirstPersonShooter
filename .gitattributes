@@ -3,3 +3,5 @@
 *.git filter=lfs diff=lfs merge=lfs -text
 Ch10_nonPBR.fbx filter=lfs diff=lfs merge=lfs -text
 Assets/Zombie filter=lfs diff=lfs merge=lfs -text
+Assets/Container/model filter=lfs diff=lfs merge=lfs -text
+diffuse.psd filter=lfs diff=lfs merge=lfs -text
