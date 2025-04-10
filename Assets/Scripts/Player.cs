@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -41,6 +42,7 @@ public class Player : MonoBehaviour
 
     private void PlayerDead()
     {
+        GetComponentInChildren<CinemachineCamera>().enabled = false;
         SoundManager.Instance.playerChannel.PlayOneShot(SoundManager.Instance.playerDeath);
         
         GetComponent<MouseMovement>().enabled = false;

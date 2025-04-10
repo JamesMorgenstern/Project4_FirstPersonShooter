@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
+    [SerializeField] internal CameraShakeController cameraShakePass;
     public static WeaponManager Instance { get; set; }
 
     public List<GameObject> weaponSlots;
@@ -246,6 +247,7 @@ public class WeaponManager : MonoBehaviour
         GameObject lethalPrefab = GetThrowablePrefab(equippedLethalType);
         
         GameObject throwable = Instantiate(lethalPrefab, throwableSpawn.transform.position, Camera.main.transform.rotation);
+        throwable.GetComponent<Throwable>().cameraShake = cameraShakePass;
         Rigidbody rb = throwable.GetComponent<Rigidbody>();
         
         rb.AddForce(Camera.main.transform.forward * (throwForce * forceMultiplier), ForceMode.Impulse);

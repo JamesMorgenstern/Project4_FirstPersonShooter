@@ -1084,6 +1084,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   isDead: 0
+  chasingPlayer: 1
+  switchInterval: 1
+  distractionDuration: 0.5
 --- !u!114 &4677693365496823894
 MonoBehaviour:
   m_ObjectHideFlags: 0

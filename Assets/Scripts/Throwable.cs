@@ -20,6 +20,11 @@ public class Throwable : MonoBehaviour
     }
 
     public ThrowableType throwableType;
+    
+    [Header("Camera Shake Parameters")] 
+    [SerializeField] internal CameraShakeController cameraShake;
+    [SerializeField] private float shakeIntensity = 5f;
+    [SerializeField] private float shakeTime = 1f;
 
     private void Start()
     {
@@ -64,6 +69,9 @@ public class Throwable : MonoBehaviour
         //Visual Effect
         GameObject explosionEffect = GlobalReferences.Instance.grenadeExplosionEffect;
         Instantiate(explosionEffect, transform.position, transform.rotation);
+        
+        //Camera shake
+        cameraShake.ShakeCamera(shakeIntensity, shakeTime);
         
         //Play Sound
         SoundManager.Instance.throwablesChannel.PlayOneShot(SoundManager.Instance.grenadeSound);

@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 6209928748100718657}
   - component: {fileID: 3319900409494374553}
   - component: {fileID: 6669805418886735224}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: M1911_Dropped
   m_TagString: Untagged
   m_Icon: {fileID: 0}

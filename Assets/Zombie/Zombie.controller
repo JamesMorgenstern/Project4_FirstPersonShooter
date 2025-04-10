@@ -473,6 +473,8 @@ MonoBehaviour:
   chaseSpeed: 6
   stopChasingDistance: 201
   attackingDistance: 2.5
+  erraticPointDistance: 3
+  switchDistance: 3
 --- !u!1102 &3158427000859765232
 AnimatorState:
   serializedVersion: 6

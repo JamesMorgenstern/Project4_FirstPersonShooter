@@ -5263,7 +5263,7 @@ GameObject:
   - component: {fileID: 6380604534710857908}
   - component: {fileID: 6658533244995396031}
   - component: {fileID: 2029244847296171975}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: M4_Dropped
   m_TagString: Untagged
   m_Icon: {fileID: 0}

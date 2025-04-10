@@ -158,6 +158,9 @@ MonoBehaviour:
   explosionForce: 1200
   hasBeenThrown: 0
   throwableType: 1
+  cameraShake: {fileID: 0}
+  shakeIntensity: 5
+  shakeTime: 1
 --- !u!114 &7077201940297403558
 MonoBehaviour:
   m_ObjectHideFlags: 0
